@@ -1,0 +1,50 @@
+name: Terraform Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+      permissions:
+        id-token: write
+        contents: read
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Github ke computer pe code lao
+      uses: actions/checkout@v3
+    - name: github ke computer pe terraform install kro
+      uses: hashicorp/setup-terraform@v2
+    - name: Azure pe login kro
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ./Demo
+
+      
+    - name: Terraform Plan
+      run: terraform plan
+      working-directory: ./Demo
+      env:
+        TF_VAR_RG_NAME: ${{ secrets.TF_VAR_RG_NAME }}
+        TF_VAR_VNET_NAME: ${{ secrets.TF_VAR_VNET_NAME }}
+        TF_VAR_SUBNET_NAME: ${{ secrets.TF_VAR_SUBNET_NAME }}
+        TF_VAR_VM_NAME: ${{ secrets.TF_VAR_VM_NAME }}
+
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+      working-directory: ./Demo
+      env:
+        TF_VAR_RG_NAME: ${{ secrets.TF_VAR_RG_NAME }}
+        TF_VAR_VNET_NAME: ${{ secrets.TF_VAR_VNET_NAME }}
+        TF_VAR_SUBNET_NAME: ${{ secrets.TF_VAR_SUBNET_NAME }}
+        TF_VAR_VM_NAME: ${{ secrets.TF_VAR_VM_NAME }}    
