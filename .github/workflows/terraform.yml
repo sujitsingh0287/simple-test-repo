@@ -5,9 +5,9 @@ on:
     branches:
       - main
 
-      permissions:
-        id-token: write
-        contents: read
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   terraform:
@@ -29,7 +29,7 @@ jobs:
       run: terraform init
       working-directory: ./Demo
 
-      
+
     - name: Terraform Plan
       run: terraform plan
       working-directory: ./Demo
